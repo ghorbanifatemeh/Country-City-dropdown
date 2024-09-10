@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Country Dropdown List</title>
+</head>
+<body>
+    
+    <select id="countryDropdown">
+        <option value="" >Select a country</option>
+    </select>
+    <hr>
+    <select id="cityDropdown">
+        <option value="">Select a city</option>
+    </select>
+
+    <script>
+
+   
+    var url = 'https://restcountries.com/v3.1/all';
+    var city='https://raw.githubusercontent.com/lmfmaier/cities-json/master/cities500.json';
+
+    $.ajax({
+        url: url,
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            
+            var $dropdown = $('#countryDropdown');
+            $dropdown.empty();
+            $.each(data.sort((a, b) => a.name.common.localeCompare(b.name.common)), function(index, country) {
+            var countryName = country.name.common;
+            var countryCode = country.cca2; 
+
+            
+            $dropdown.append('<option value="' + countryCode + '">' + countryName + '</option>');
+
+          });
+            
+        },
+        error: function() {
+            console.error('Failed to fetch country data.');
+        }
+    });
+    $(document).ready(function() {
+        
+        $("#countryDropdown").change(function(){
+           var countryCode=$("option:selected",this).attr("value");
+           console.log(countryCode);
+            $.ajax({
+            url: city,
+            method: 'GET',
+            dataType: 'json',
+            success: function(data) {
+            var $dropdown = $('#cityDropdown');
+            $dropdown.empty();
+            $.each(data, function(index, city) {
+
+               if(countryCode==city.country){
+                console.log(city)
+               $dropdown.append('<option value="' + countryCode + '">' + city.name + '</option>');
+               } 
+              
+             });
+            
+             },
+          error: function() {
+            console.error('Failed to fetch country data.');
+             }
+            });
+         });
+    });
+
+    </script>
+
+</body>
+</html>
+
+
